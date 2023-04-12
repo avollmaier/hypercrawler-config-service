@@ -13,6 +13,21 @@ spring:
     name: config-service
   lifecycle:
     timeout-per-shutdown-phase: 15s
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/avollmaier/hypercrawler-config-repo
+          default-label: main
+          timeout: 5
+          clone-on-start: true
+          force-pull: true
+          search-paths: 'config/'
+          order: 1
+        native:
+          search-locations:
+            - classpath:/config
+          order: 2
 
 logging:
   pattern:
@@ -42,3 +57,12 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${DISCOVERY_SERVICE_URL:http://localhost:9000/eureka/}
+  instance:
+    lease-expiration-duration-in-seconds: 3
+    lease-renewal-interval-in-seconds: 1
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.name}:${random.value}
